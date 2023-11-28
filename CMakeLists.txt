@@ -55,6 +55,7 @@ else()
 endif()
 
 # Subdirectories to look for other CMakeLists.txt files
+add_subdirectory(drivers)
 add_subdirectory(lab1_helloworld)
 add_subdirectory(lab9_project)
 

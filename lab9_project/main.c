@@ -11,6 +11,7 @@
 void gameControl_isr();
 static void init_hardware();
 
+// infinite while loop
 int main() {
   init_hardware();
   gameControl_init();
@@ -18,11 +19,13 @@ int main() {
   }
     }
 
+// tick game contoller when timer ends
 void gameControl_isr() {
     intervalTimer_ackInterrupt(INTERVAL_TIMER_0);
     gameControl_tick();
 }
 
+// initialize all hardware
 static void init_hardware() {
   display_init();
   buttons_init();
