@@ -11,8 +11,9 @@ typedef enum {
   MAPSPACE_OBSTACLE,
   MAPSPACE_APPLE,
   MAPSPACE_CONTAINS_SNAKE
-} mapSpact_t;
+} mapSpace_t;
 
+// keeps track of tile location
 typedef struct {
   uint8_t row;
   uint8_t col;
@@ -20,7 +21,7 @@ typedef struct {
 
 // passable board object
 typedef struct {
-  mapSpact_t snakeMap[MYCONFIG_TILE_HEIGHT][MYCONFIG_TILE_WIDTH];
+  mapSpace_t snakeMap[MYCONFIG_TILE_HEIGHT][MYCONFIG_TILE_WIDTH];
 
   bool haveApple;
   bool haveObstacle;
@@ -38,5 +39,15 @@ void snakemap_clear(snakemap_t *currentMap) {
 }
 
 // converts snake row and column to display pixels
+display_point_t snakeMap_getLocationFromTile(mapSpaceLocation_t tile) {
+  display_point_t location;
+  uint8_t tx = tile.col;
+  uint8_t ty = tile.row;
+
+  location.x = tx * MYCONFIG_TILE_SIZE + MYCONFIG_LEFT_BOARDER;
+  location.x = ty * MYCONFIG_TILE_SIZE + MYCONFIG_UPPER_BOARDER;
+
+  return location;
+}
 
 #endif /* SNAKEMAP_H */
