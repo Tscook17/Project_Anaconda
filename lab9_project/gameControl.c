@@ -55,7 +55,7 @@ void gameControl_tick() {
     display_fillScreen(MYCONFIG_BACKGROUND_COLOR);
     titleScreen(draw);
     // clear map
-    // reset snake
+    snake_init(mapPtr);
     break;
   case title_st:
     startDelayCnt = 0;
@@ -64,7 +64,7 @@ void gameControl_tick() {
     startDelayCnt++;
     break;
   case playing_st:
-    // snake_tick();
+    snake_tick();
     drawScore();
     break;
   case paused_st:

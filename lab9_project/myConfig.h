@@ -3,6 +3,8 @@
 
 // general specs
 #define MYCONFIG_GAME_TIMER_PERIOD 45.0E-3
+#define MYCONFIG_ERASE true
+#define MYCONFIG_DRAW false
 
 // title screen
 #define MYCONFIG_TITLE_TEXT_SIZE 4
@@ -58,8 +60,10 @@
 
 // snake
 #define MYCONFIG_SNAKE_MAX_LENGTH (MYCONFIG_TILE_HEIGHT * MYCONFIG_TILE_WIDTH)
-#define MYCONFIG_STARTING_SNAKE_LENGTH 5
+#define MYCONFIG_STARTING_SNAKE_LENGTH 3
 #define MYCONFIG_SNAKE_HEAD_START_LOCATION_ROW // add value here
+#define MYCONFIG_SNAKE_COLOR DISPLAY_GREEN
+
 // apples
 
 // blockades
