@@ -1,14 +1,26 @@
 #include <display.h>
+#include <stdint.h>
+#include <stdio.h>
 
+#include "buttons.h"
 #include "gameControl.h"
 #include "myConfig.h"
 #include "snake.h"
 #include "snakeMap.h"
+#include "switches.h"
+#include "touchscreen.h"
+
+#define undraw true
+#define draw false
 
 // helper function declarations
 static void setMap();
 static void startScreen(bool erase);
 static void titleScreen(bool erase);
+static void drawPaused(bool erase);
+static void drawScore();
+static void drawAttempts();
+static void endGameScreen();
 
 typedef enum {
   init_st,        // start up state
@@ -21,10 +33,13 @@ typedef enum {
 
 // global variables
 static gameControl_st_t currentState;
+static gameControl_st_t previousState;
 static uint32_t startDelayCnt;
 static uint32_t startDelayTicks;
 static snakemap_t currentMap;
 static snakemap_t *mapPtr;
+static int8_t score;
+static int8_t numAttempts;
 
 void gameControl_init() {
   currentState = init_st;
@@ -38,14 +53,19 @@ void gameControl_tick() {
   switch (currentState) {
   case init_st:
     display_fillScreen(MYCONFIG_BACKGROUND_COLOR);
-    startDelayCnt = 0;
+    titleScreen(draw);
+    // clear map
+    // reset snake
     break;
   case title_st:
+    startDelayCnt = 0;
     break;
   case startScreen_st:
     startDelayCnt++;
     break;
   case playing_st:
+    // snake_tick();
+    drawScore();
     break;
   case paused_st:
     break;
@@ -58,14 +78,21 @@ void gameControl_tick() {
   // transition sm
   switch (currentState) {
   case init_st:
-    currentState = startScreen_st;
-    startScreen(false);
+    currentState = title_st;
     break;
   case title_st:
+    if (touchscreen_get_status() == TOUCHSCREEN_RELEASED) {
+      touchscreen_ack_touch();
+      titleScreen(undraw);
+      startScreen(draw);
+      currentState = startScreen_st;
+    } else {
+      currentState = title_st;
+    }
     break;
   case startScreen_st:
     if (startDelayCnt >= startDelayTicks) {
-      startScreen(true);
+      startScreen(undraw);
       setMap();
       currentState = playing_st;
     } else {
@@ -73,10 +100,33 @@ void gameControl_tick() {
     }
     break;
   case playing_st:
+    if (0) { // switch
+      currentState = paused_st;
+      drawPaused(draw);
+    } else if (0) { // deaded
+      currentState = endGame_st;
+      endGameScreen();
+    } else {
+      currentState = playing_st;
+    }
     break;
   case paused_st:
+    if (0) { // unswitched
+      currentState = playing_st;
+      drawPaused(undraw);
+    } else if (0) { // reset button pressed
+      currentState = init_st;
+      numAttempts++;
+    } else {
+      currentState = paused_st;
+    }
     break;
   case endGame_st:
+    if (0) { // reset button pressed
+      currentState = init_st;
+    } else {
+      currentState = endGame_st;
+    }
     break;
   default:
     break;
@@ -97,26 +147,88 @@ static void setMap() {
   display_drawFastHLine(MYCONFIG_LEFT_BOARDER, MYCONFIG_LOWER_BOARDER,
                         (MYCONFIG_RIGHT_BOARDER - MYCONFIG_LEFT_BOARDER),
                         MYCONFIG_BOARDER_COLOR);
+  drawAttempts();
 }
 
 static void startScreen(bool erase) {
   display_setTextColor(erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_TEXT_COLOR);
   display_setTextSize(MYCONFIG_STARTSCREEN_TEXT_SIZE);
   display_setCursor(0, MYCONFIG_STARTSCREEN_TEXT_YLOCATION);
-  display_println("Press button3 and button0\n"
-                  "  to turn left and right,\n"
-                  " press button2/button1 to\n"
-                  "  reset/pause, eat apples\n"
-                  " avoid obstacles, survive\n");
+  display_println("Press button 3 & 0 to turn\n"
+                  "   flip switch0 to pause\n"
+                  "\n"
+                  " eat apples, avoid blocks,\n"
+                  "\n"
+                  "         SURVIVE!\n");
 }
 
 static void titleScreen(bool erase) {
+  // title text
+  display_setTextColor(erase ? MYCONFIG_BACKGROUND_COLOR
+                             : MYCONFIG_TITLE_TEXT_COLOR);
+  display_setTextSize(MYCONFIG_TITLE_TEXT_SIZE);
+  display_setCursor(0, MYCONFIG_TITLE_TEXT_YLOCATION);
+  display_println("   ANACONDA\n");
+
+  // sub title text
   display_setTextColor(erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_TEXT_COLOR);
-  display_setTextSize(MYCONFIG_STARTSCREEN_TEXT_SIZE);
-  display_setCursor(0, MYCONFIG_STARTSCREEN_TEXT_YLOCATION);
-  display_println("Press button3 and button0\n"
-                  "  to turn left and right,\n"
-                  " press button2/button1 to\n"
-                  "  reset/pause, eat apples\n"
-                  " avoid obstacles, survive\n");
+  display_setTextSize(MYCONFIG_SUBTITLE_TEXT_SIZE);
+  display_setCursor(MYCONFIG_TITLE_TEXT_XLOCATION,
+                    MYCONFIG_SUBTITLE_TEXT_YLOCATION);
+  display_println("Tobias Cook/James Subieta\n");
+  display_setCursor(MYCONFIG_TITLE_TEXT_XLOCATION,
+                    MYCONFIG_SUBTITLE_TEXT_YLOCATION + 40);
+  display_println("Touch the Screen to Start\n");
+}
+
+static void drawPaused(bool erase) {
+  display_setTextColor(erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_TEXT_COLOR);
+  display_setTextSize(MYCONFIG_SCORE_TEXT_SIZE);
+  display_setCursor(MYCONFIG_PAUSE_XLOCATION, MYCONFIG_PAUSE_YLOCATION);
+  display_println("PAUSED: restart game by pressing button2");
+}
+
+static void drawScore() {
+  // print score
+  display_setTextSize(MYCONFIG_SCORE_TEXT_SIZE);
+  display_setCursor(MYCONFIG_SCORE_XLOCATION, MYCONFIG_SCORE_YLOCATION);
+  display_setTextColor(MYCONFIG_TEXT_COLOR);
+  display_println("Score: \n");
+
+  // erases old number
+  if (score > 0) {
+    display_setTextColor(MYCONFIG_BACKGROUND_COLOR);
+    display_setCursor(MYCONFIG_NUM_SCORE_XLOCATION,
+                      MYCONFIG_NUM_SCORE_YLOCATION);
+    display_printDecimalInt(score - 1);
+  }
+
+  display_setCursor(MYCONFIG_NUM_SCORE_XLOCATION, MYCONFIG_NUM_SCORE_YLOCATION);
+  display_setTextColor(MYCONFIG_TEXT_COLOR);
+  display_printDecimalInt(score);
+}
+
+static void drawAttempts() {
+  // print score
+  display_setTextSize(MYCONFIG_SCORE_TEXT_SIZE);
+  display_setCursor(MYCONFIG_ATTEMPTS_XLOCATION, MYCONFIG_ATTEMPTS_YLOCATION);
+  display_setTextColor(MYCONFIG_TEXT_COLOR);
+  display_println("Attempts: \n");
+
+  display_setCursor(MYCONFIG_NUM_ATTEMPTS_XLOCATION,
+                    MYCONFIG_NUM_ATTEMPTS_YLOCATION);
+  display_setTextColor(MYCONFIG_TEXT_COLOR);
+  display_printDecimalInt(numAttempts);
+}
+
+static void endGameScreen() {
+  display_setTextColor(MYCONFIG_ENDGAME_TEXT_COLOR);
+  display_setTextSize(MYCONFIG_ENDGAME_TEXT_SIZE);
+  display_setCursor(MYCONFIG_ENDGAME_XLOCATION, MYCONFIG_ENDGAME_YLOCATION);
+  display_println("GAME OVER\n");
+
+  display_setTextSize(MYCONFIG_SUBENDGAME_TEXT_SIZE);
+  display_setCursor(MYCONFIG_SUBENDGAME_XLOCATION,
+                    MYCONFIG_SUBENDGAME_YLOCATION);
+  display_println("Press button2 to restart\n");
 }

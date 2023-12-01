@@ -4,6 +4,7 @@
 #include "interrupts.h"
 #include "buttons.h"
 #include "intervalTimer.h"
+#include "touchscreen.h"
 #include "myConfig.h"
 #include "gameControl.h"
 
@@ -22,6 +23,7 @@ int main() {
 // tick game contoller when timer ends
 void gameControl_isr() {
     intervalTimer_ackInterrupt(INTERVAL_TIMER_0);
+    touchscreen_tick();
     gameControl_tick();
 }
 
@@ -29,6 +31,7 @@ void gameControl_isr() {
 static void init_hardware() {
   display_init();
   buttons_init();
+  touchscreen_init(MYCONFIG_GAME_TIMER_PERIOD);
 
   // Initialize timer interrupts
   interrupts_init();
