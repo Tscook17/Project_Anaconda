@@ -37,7 +37,6 @@ void snakemap_clear(snakemap_t *currentMap) {
   currentMap->haveObstacle = false;
 }
 
-//converts snake row and column to display pixels
-
+// converts snake row and column to display pixels
 
 #endif /* SNAKEMAP_H */
