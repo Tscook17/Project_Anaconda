@@ -31,5 +31,6 @@ typedef struct {
 void snakemap_clear(snakemap_t *currentMap);
 display_point_t snakeMap_getLocationFromTile(mapSpaceLocation_t tile);
 
+mapSpaceLocation_t snakeMap_getTileFromLocation(display_point_t spot);
 
 #endif /* SNAKEMAP_H */

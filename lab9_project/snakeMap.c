@@ -19,7 +19,17 @@ display_point_t snakeMap_getLocationFromTile(mapSpaceLocation_t tile) {
   uint8_t ty = tile.row;
 
   location.x = tx * MYCONFIG_TILE_SIZE + MYCONFIG_LEFT_BOARDER;
-  location.x = ty * MYCONFIG_TILE_SIZE + MYCONFIG_UPPER_BOARDER;
+  location.y = ty * MYCONFIG_TILE_SIZE + MYCONFIG_UPPER_BOARDER;
 
+  return location;
+}
+
+mapSpaceLocation_t snakeMap_getTileFromLocation(display_point_t spot){
+  mapSpaceLocation_t location;
+  uint8_t tx = spot.x;
+  uint8_t ty = spot.y;
+
+  location.col = (tx - MYCONFIG_LEFT_BOARDER)/MYCONFIG_TILE_SIZE;
+  location.row = (ty - MYCONFIG_UPPER_BOARDER)/MYCONFIG_TILE_SIZE;
   return location;
 }

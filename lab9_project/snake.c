@@ -14,41 +14,50 @@ static mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
 static void add_head_snake(mapSpaceLocation_t move);
 static void remove_tail_snake();
 static void snakesToSquares(mapSpaceLocation_t location, bool erase);
-//static bool checkButton();//will be done later
-//static void computeNextMove();
-// global variables
+static uint8_t findOpening();
+
+// static bool checkButton();//will be done later
+// static void computeNextMove();
+//  global variables
 static snake_t snake;
 static snake_st_t currentState;
 static snakemap_t *currentMap;
 static snake_direction snakeDirection;
+static uint8_t speedControl;
+
 static uint8_t moveTest;
 
-//call before snake tick
+// call before snake tick
 void snake_init(snakemap_t *map) {
-  snake.head = NULL;
-  snake.tail = NULL;
+  snake.head = -1;
+  snake.tail = -1;
   snake.snakeLength = 0;
   currentMap = map;
   snakeDirection = right;
   currentState = init_st;
-  for (uint8_t i = 0; i < MYCONFIG_STARTING_SNAKE_LENGTH; i++) {
-    add_head_snake(set_snake_location(1, (i + 1)));
-  }
 }
 
 // probably tick fast enough that you won't miss interrupts?
 void snake_tick() {
-
-  // action sm
+  // printf("%d\n", currentState);
+  //  action sm
   switch (currentState) {
   case init_st:
+    snake_dead();
+    for (uint8_t i = 0; i < MYCONFIG_STARTING_SNAKE_LENGTH; i++) {
+      add_head_snake(set_snake_location(1, (i + 1)));
+    }
     break;
   case moving_st:
     // here is where the movement happens
     // or rather, call move snake
-    move_snake(set_snake_location(1,moveTest), false);
+
+    if (!(speedControl % MYCONFIG_SNAKE_SPEED)) { // determines snake speed
+    move_snake(set_snake_location(1, moveTest), false);
     moveTest++;
-      break;
+    }
+    speedControl++;
+    break;
   case dead_st:
     break;
   default:
@@ -77,8 +86,13 @@ void snake_tick() {
 }
 
 void snake_dead() {
-  for (uint16_t i = 0; i < snake.snakeLength; i++) {
-    remove_tail_snake();
+  node_t temp;
+  temp.empty = true;
+  temp.next = -1;
+  temp.previous = -1;
+
+  for (uint16_t i = 0; i < MYCONFIG_SNAKE_MAX_LENGTH; i++) {
+    snake.body[i] = temp;
   }
 }
 
@@ -98,11 +112,14 @@ static mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
 }
 
 static void add_head_snake(mapSpaceLocation_t move) {
-  node_t *new_node = (node_t *)malloc(sizeof(node_t));
-  new_node->tileLocation = move;
-  new_node->next = NULL;
-  new_node->previous = snake.head;
-  snake.head = new_node;
+  node_t new_node;
+  uint8_t index = findOpening();
+  snake.body[index] = new_node;
+  snake.body[index].tileLocation = move;
+  snake.body[index].next = -1;
+  snake.body[index].previous = snake.head;
+  snake.body[snake.head].next = index;
+  snake.head = index;
   // if snake empty update tail
   if (snake.snakeLength == 0) {
     snake.tail = snake.head;
@@ -112,19 +129,12 @@ static void add_head_snake(mapSpaceLocation_t move) {
 }
 
 static void remove_tail_snake() {
-  /* if there is only one item in the list, remove it */
-  if (snake.tail->next == NULL) {
-    free(snake.tail);
-    return;
-  }
-
-  /* now current points to the second to last item of the list, so let's remove
-   * current->next */
-  mapSpaceLocation_t spot = snake.tail->tileLocation;
-  node_t *newSnakeTail = snake.tail->next;
-  free(snake.tail);
-  snake.tail = newSnakeTail;
-  newSnakeTail->previous = NULL;
+  mapSpaceLocation_t spot = snake.body[snake.tail].tileLocation;
+  int8_t newTailIndex = snake.body[snake.tail].next;
+  snake.body[snake.tail].empty = true;
+  snake.tail = newTailIndex;
+  //printf("tail:%d\n", newTailIndex);
+  snake.body[newTailIndex].previous = -1;
   snake.snakeLength--;
   snakesToSquares(spot, MYCONFIG_ERASE);
 }
@@ -134,4 +144,12 @@ static void snakesToSquares(mapSpaceLocation_t location, bool erase) {
   display_fillRect(snakeSquare.x, snakeSquare.y, MYCONFIG_TILE_SIZE,
                    MYCONFIG_TILE_SIZE,
                    (erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_SNAKE_COLOR));
+}
+
+static uint8_t findOpening() {
+  for (uint8_t i = 0; i < MYCONFIG_SNAKE_MAX_LENGTH; i++) {
+    if (snake.body[i].empty) {
+      return i;
+    }
+  }
 }

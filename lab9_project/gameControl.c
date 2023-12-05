@@ -13,6 +13,11 @@
 #define undraw true
 #define draw false
 
+#define TOP_SIDE (MYCONFIG_UPPER_BOARDER - MYCONFIG_BOARDER_OFFSET)
+#define BOT_SIDE (MYCONFIG_LOWER_BOARDER + MYCONFIG_BOARDER_OFFSET)
+#define LEFT_SIDE (MYCONFIG_LEFT_BOARDER - MYCONFIG_BOARDER_OFFSET)
+#define RIGHT_SIDE (MYCONFIG_RIGHT_BOARDER + MYCONFIG_BOARDER_OFFSET)
+
 // helper function declarations
 static void setMap();
 static void startScreen(bool erase);
@@ -135,17 +140,13 @@ void gameControl_tick() {
 
 static void setMap() {
   // set borders
-  display_drawFastVLine(MYCONFIG_LEFT_BOARDER, MYCONFIG_UPPER_BOARDER,
-                        (MYCONFIG_LOWER_BOARDER - MYCONFIG_UPPER_BOARDER),
+  display_drawFastVLine(LEFT_SIDE, TOP_SIDE, (BOT_SIDE - TOP_SIDE),
                         MYCONFIG_BOARDER_COLOR);
-  display_drawFastVLine(MYCONFIG_RIGHT_BOARDER, MYCONFIG_UPPER_BOARDER,
-                        (MYCONFIG_LOWER_BOARDER - MYCONFIG_UPPER_BOARDER),
+  display_drawFastVLine(RIGHT_SIDE, TOP_SIDE, (BOT_SIDE - TOP_SIDE),
                         MYCONFIG_BOARDER_COLOR);
-  display_drawFastHLine(MYCONFIG_LEFT_BOARDER, MYCONFIG_UPPER_BOARDER,
-                        (MYCONFIG_RIGHT_BOARDER - MYCONFIG_LEFT_BOARDER),
+  display_drawFastHLine(LEFT_SIDE, TOP_SIDE, (RIGHT_SIDE - LEFT_SIDE),
                         MYCONFIG_BOARDER_COLOR);
-  display_drawFastHLine(MYCONFIG_LEFT_BOARDER, MYCONFIG_LOWER_BOARDER,
-                        (MYCONFIG_RIGHT_BOARDER - MYCONFIG_LEFT_BOARDER),
+  display_drawFastHLine(LEFT_SIDE, BOT_SIDE, (RIGHT_SIDE - LEFT_SIDE),
                         MYCONFIG_BOARDER_COLOR);
   drawAttempts();
 }
