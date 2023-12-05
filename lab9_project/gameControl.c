@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "buttons.h"
+#include "switches.h"
 #include "gameControl.h"
 #include "myConfig.h"
 #include "snake.h"
@@ -105,7 +106,7 @@ void gameControl_tick() {
     }
     break;
   case playing_st:
-    if (0) { // switch
+    if (switches_read() & SWITCHES_SW0_MASK) { // switch
       currentState = paused_st;
       drawPaused(draw);
     } else if (0) { // deaded
@@ -116,18 +117,18 @@ void gameControl_tick() {
     }
     break;
   case paused_st:
-    if (0) { // unswitched
+    if (~switches_read() & SWITCHES_SW0_MASK) { // unswitched
       currentState = playing_st;
       drawPaused(undraw);
-    } else if (0) { // reset button pressed
-      currentState = init_st;
+    } else if (buttons_read() & BUTTONS_BTN2_MASK) { // reset button pressed
+      currentState = title_st;
       numAttempts++;
     } else {
       currentState = paused_st;
     }
     break;
   case endGame_st:
-    if (0) { // reset button pressed
+    if (buttons_read() & BUTTONS_BTN2_MASK) { // reset button pressed
       currentState = init_st;
     } else {
       currentState = endGame_st;

@@ -3,6 +3,7 @@
 #include "display.h"
 #include "interrupts.h"
 #include "buttons.h"
+#include "switches.h"
 #include "intervalTimer.h"
 #include "touchscreen.h"
 #include "myConfig.h"
@@ -31,6 +32,7 @@ void gameControl_isr() {
 static void init_hardware() {
   display_init();
   buttons_init();
+  switches_init();
   touchscreen_init(MYCONFIG_GAME_TIMER_PERIOD);
 
   // Initialize timer interrupts
