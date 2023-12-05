@@ -24,7 +24,7 @@ static snake_st_t currentState;
 static snakemap_t *currentMap;
 static snake_direction snakeDirection;
 
-static uint8_t moveTest;
+static uint8_t moveTest = 4;
 
 // call before snake tick
 void snake_init(snakemap_t *map) {
@@ -38,7 +38,6 @@ void snake_init(snakemap_t *map) {
 
 // probably tick fast enough that you won't miss interrupts?
 void snake_tick() {
-  // printf("%d\n", currentState);
   //  action sm
   switch (currentState) {
   case init_st:
@@ -46,6 +45,7 @@ void snake_tick() {
     for (uint8_t i = 0; i < MYCONFIG_STARTING_SNAKE_LENGTH; i++) {
       add_head_snake(set_snake_location(1, (i + 1)));
     }
+    moveTest = 4;
     break;
   case moving_st:
     // here is where the movement happens
