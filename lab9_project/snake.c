@@ -23,7 +23,6 @@ static snake_t snake;
 static snake_st_t currentState;
 static snakemap_t *currentMap;
 static snake_direction snakeDirection;
-static uint8_t speedControl;
 
 static uint8_t moveTest;
 
@@ -51,12 +50,8 @@ void snake_tick() {
   case moving_st:
     // here is where the movement happens
     // or rather, call move snake
-
-    if (!(speedControl % MYCONFIG_SNAKE_SPEED)) { // determines snake speed
     move_snake(set_snake_location(1, moveTest), false);
     moveTest++;
-    }
-    speedControl++;
     break;
   case dead_st:
     break;
@@ -90,6 +85,8 @@ void snake_dead() {
   temp.empty = true;
   temp.next = -1;
   temp.previous = -1;
+  temp.tileLocation.col = 0;
+  temp.tileLocation.row = 0;
 
   for (uint16_t i = 0; i < MYCONFIG_SNAKE_MAX_LENGTH; i++) {
     snake.body[i] = temp;
@@ -144,6 +141,10 @@ static void snakesToSquares(mapSpaceLocation_t location, bool erase) {
   display_fillRect(snakeSquare.x, snakeSquare.y, MYCONFIG_TILE_SIZE,
                    MYCONFIG_TILE_SIZE,
                    (erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_SNAKE_COLOR));
+  if (!erase) {
+    display_drawRect(snakeSquare.x, snakeSquare.y, MYCONFIG_TILE_SIZE,
+                   MYCONFIG_TILE_SIZE, MYCONFIG_SNAKE_BORDER_COLOR);
+  }
 }
 
 static uint8_t findOpening() {

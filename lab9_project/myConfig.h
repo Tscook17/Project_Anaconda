@@ -64,12 +64,14 @@
 #define MYCONFIG_STARTING_SNAKE_LENGTH 3
 #define MYCONFIG_SNAKE_HEAD_START_LOCATION_ROW // add value here
 #define MYCONFIG_SNAKE_COLOR DISPLAY_GREEN
+#define MYCONFIG_SNAKE_BORDER_COLOR DISPLAY_DARK_GREEN
 #define MYCONFIG_SNAKE_SPEED SIXTEENTH_SPEED
 
 // apples
 
 // blockades
 
+// enum of different snake speed values
 typedef enum {
   FULL_SPEED = 1,
   HALF_SPEED = 2,

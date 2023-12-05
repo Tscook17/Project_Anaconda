@@ -46,6 +46,7 @@ static snakemap_t currentMap;
 static snakemap_t *mapPtr;
 static int8_t score;
 static int8_t numAttempts;
+static uint8_t speedControl;
 
 void gameControl_init() {
   currentState = init_st;
@@ -70,7 +71,10 @@ void gameControl_tick() {
     startDelayCnt++;
     break;
   case playing_st:
-    snake_tick();
+    if (!(speedControl % MYCONFIG_SNAKE_SPEED)) { // determines snake speed
+      snake_tick();
+    }
+    speedControl++;
     drawScore();
     break;
   case paused_st:
@@ -121,7 +125,7 @@ void gameControl_tick() {
       currentState = playing_st;
       drawPaused(undraw);
     } else if (buttons_read() & BUTTONS_BTN2_MASK) { // reset button pressed
-      currentState = title_st;
+      currentState = init_st;
       numAttempts++;
     } else {
       currentState = paused_st;
