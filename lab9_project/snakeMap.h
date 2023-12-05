@@ -1,8 +1,8 @@
 #ifndef SNAKEMAP_H
 #define SNAKEMAP_H
 
-#include "myConfig.h"
 #include "display.h"
+#include "myConfig.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -29,6 +29,7 @@ typedef struct {
 } snakemap_t;
 
 void snakemap_clear(snakemap_t *currentMap);
+
 display_point_t snakeMap_getLocationFromTile(mapSpaceLocation_t tile);
 
 mapSpaceLocation_t snakeMap_getTileFromLocation(display_point_t spot);

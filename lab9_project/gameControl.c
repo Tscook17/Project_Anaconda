@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "buttons.h"
-#include "switches.h"
 #include "gameControl.h"
 #include "myConfig.h"
 #include "snake.h"
@@ -28,6 +27,7 @@ static void drawScore();
 static void drawAttempts();
 static void endGameScreen();
 
+// game control sm state type
 typedef enum {
   init_st,        // start up state
   title_st,       // show title
@@ -48,6 +48,7 @@ static int8_t score;
 static int8_t numAttempts;
 static uint8_t speedControl;
 
+// call before running tick or to reset
 void gameControl_init() {
   currentState = init_st;
   mapPtr = &currentMap;
@@ -55,6 +56,7 @@ void gameControl_init() {
       (int)(MYCONFIG_STARTSCREEN_DELAY / MYCONFIG_GAME_TIMER_PERIOD);
 }
 
+// ticks game control sm
 void gameControl_tick() {
   // action sm
   switch (currentState) {
@@ -143,6 +145,7 @@ void gameControl_tick() {
   }
 }
 
+// draw map
 static void setMap() {
   // set borders
   display_drawFastVLine(LEFT_SIDE, TOP_SIDE, (BOT_SIDE - TOP_SIDE),
@@ -156,6 +159,7 @@ static void setMap() {
   drawAttempts();
 }
 
+// draw/erase instructions in start screen
 static void startScreen(bool erase) {
   display_setTextColor(erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_TEXT_COLOR);
   display_setTextSize(MYCONFIG_STARTSCREEN_TEXT_SIZE);
@@ -168,6 +172,7 @@ static void startScreen(bool erase) {
                   "         SURVIVE!\n");
 }
 
+// draw/erase title screen
 static void titleScreen(bool erase) {
   // title text
   display_setTextColor(erase ? MYCONFIG_BACKGROUND_COLOR
@@ -187,6 +192,7 @@ static void titleScreen(bool erase) {
   display_println("Touch the Screen to Start\n");
 }
 
+// draw/erase paused tag
 static void drawPaused(bool erase) {
   display_setTextColor(erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_TEXT_COLOR);
   display_setTextSize(MYCONFIG_SCORE_TEXT_SIZE);
@@ -194,6 +200,7 @@ static void drawPaused(bool erase) {
   display_println("PAUSED: restart game by pressing button2");
 }
 
+// draw/update score
 static void drawScore() {
   // print score
   display_setTextSize(MYCONFIG_SCORE_TEXT_SIZE);
@@ -214,6 +221,7 @@ static void drawScore() {
   display_printDecimalInt(score);
 }
 
+// draw attempts
 static void drawAttempts() {
   // print score
   display_setTextSize(MYCONFIG_SCORE_TEXT_SIZE);
@@ -227,6 +235,7 @@ static void drawAttempts() {
   display_printDecimalInt(numAttempts);
 }
 
+// draw endgame tag
 static void endGameScreen() {
   display_setTextColor(MYCONFIG_ENDGAME_TEXT_COLOR);
   display_setTextSize(MYCONFIG_ENDGAME_TEXT_SIZE);

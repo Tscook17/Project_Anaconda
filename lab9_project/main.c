@@ -1,13 +1,13 @@
 #include <stdio.h>
 
-#include "display.h"
-#include "interrupts.h"
 #include "buttons.h"
-#include "switches.h"
-#include "intervalTimer.h"
-#include "touchscreen.h"
-#include "myConfig.h"
+#include "display.h"
 #include "gameControl.h"
+#include "interrupts.h"
+#include "intervalTimer.h"
+#include "myConfig.h"
+#include "switches.h"
+#include "touchscreen.h"
 
 // helper function declarations
 void gameControl_isr();
@@ -17,15 +17,15 @@ static void init_hardware();
 int main() {
   init_hardware();
   gameControl_init();
-  while(1){
+  while (1) {
   }
-    }
+}
 
 // tick game contoller when timer ends
 void gameControl_isr() {
-    intervalTimer_ackInterrupt(INTERVAL_TIMER_0);
-    touchscreen_tick();
-    gameControl_tick();
+  intervalTimer_ackInterrupt(INTERVAL_TIMER_0);
+  touchscreen_tick();
+  gameControl_tick();
 }
 
 // initialize all hardware

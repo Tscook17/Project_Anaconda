@@ -5,9 +5,12 @@
 
 // state machine states for the snake
 typedef enum { init_st, moving_st, go_right, go_left, dead_st } snake_st_t;
+
 // this is a global var that determines what direction the snake should move
 typedef enum { up, down, left, right } snake_direction;
+
 // helper functions
+static void snake_clear();
 static void move_snake(mapSpaceLocation_t move, bool grow);
 static mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
                                              uint8_t colLocation);
@@ -18,12 +21,14 @@ static uint8_t findOpening();
 
 // static bool checkButton();//will be done later
 // static void computeNextMove();
+
 //  global variables
 static snake_t snake;
 static snake_st_t currentState;
 static snakemap_t *currentMap;
 static snake_direction snakeDirection;
 
+// test variables
 static uint8_t moveTest = 4;
 
 // call before snake tick
@@ -41,7 +46,7 @@ void snake_tick() {
   //  action sm
   switch (currentState) {
   case init_st:
-    snake_dead();
+    snake_clear();
     for (uint8_t i = 0; i < MYCONFIG_STARTING_SNAKE_LENGTH; i++) {
       add_head_snake(set_snake_location(1, (i + 1)));
     }
@@ -80,7 +85,8 @@ void snake_tick() {
   }
 }
 
-void snake_dead() {
+// clear snake body
+static void snake_clear() {
   node_t temp;
   temp.empty = true;
   temp.next = -1;
@@ -93,6 +99,7 @@ void snake_dead() {
   }
 }
 
+// move snake to passed move, don't cut tail if growing
 static void move_snake(mapSpaceLocation_t move, bool grow) {
   add_head_snake(move);
   if (!grow) {
@@ -100,6 +107,7 @@ static void move_snake(mapSpaceLocation_t move, bool grow) {
   }
 }
 
+// pass row and column, return tile location struct
 static mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
                                              uint8_t colLocation) {
   mapSpaceLocation_t newLocation;
@@ -108,6 +116,7 @@ static mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
   return newLocation;
 }
 
+// add a new head to snake
 static void add_head_snake(mapSpaceLocation_t move) {
   node_t new_node;
   uint8_t index = findOpening();
@@ -125,17 +134,19 @@ static void add_head_snake(mapSpaceLocation_t move) {
   snakesToSquares(move, MYCONFIG_DRAW);
 }
 
+// remove tail from snake
 static void remove_tail_snake() {
   mapSpaceLocation_t spot = snake.body[snake.tail].tileLocation;
   int8_t newTailIndex = snake.body[snake.tail].next;
   snake.body[snake.tail].empty = true;
   snake.tail = newTailIndex;
-  //printf("tail:%d\n", newTailIndex);
+  // printf("tail:%d\n", newTailIndex);
   snake.body[newTailIndex].previous = -1;
   snake.snakeLength--;
   snakesToSquares(spot, MYCONFIG_ERASE);
 }
 
+// draw/erase snake segment
 static void snakesToSquares(mapSpaceLocation_t location, bool erase) {
   display_point_t snakeSquare = snakeMap_getLocationFromTile(location);
   display_fillRect(snakeSquare.x, snakeSquare.y, MYCONFIG_TILE_SIZE,
@@ -143,10 +154,11 @@ static void snakesToSquares(mapSpaceLocation_t location, bool erase) {
                    (erase ? MYCONFIG_BACKGROUND_COLOR : MYCONFIG_SNAKE_COLOR));
   if (!erase) {
     display_drawRect(snakeSquare.x, snakeSquare.y, MYCONFIG_TILE_SIZE,
-                   MYCONFIG_TILE_SIZE, MYCONFIG_SNAKE_BORDER_COLOR);
+                     MYCONFIG_TILE_SIZE, MYCONFIG_SNAKE_BORDER_COLOR);
   }
 }
 
+// find opening in snake body array
 static uint8_t findOpening() {
   for (uint8_t i = 0; i < MYCONFIG_SNAKE_MAX_LENGTH; i++) {
     if (snake.body[i].empty) {
