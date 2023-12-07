@@ -4,6 +4,7 @@
 #include "myConfig.h"
 #include "snake.h"
 #include "snakeMap.h"
+#include "gameControl.h"
 
 // snake body segment struct
 typedef struct node {
@@ -22,7 +23,7 @@ typedef struct {
 } snake_t;
 
 // intializes/reinits the snake sm
-void snake_init(snakemap_t *currentMap);
+void snake_init(snakemap_t *currentMap, button_indicator *button);
 
 // ticks snake sm
 void snake_tick();
