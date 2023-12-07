@@ -51,11 +51,14 @@ static snakemap_t *mapPtr;
 static int8_t score;
 static int8_t numAttempts;
 static uint8_t speedControl;
+static button_indicator buttonInput = none;
+static button_indicator *buttonPtr;
 
 // call before running tick or to reset
 void gameControl_init() {
   currentState = init_st;
   mapPtr = &currentMap;
+  buttonPtr = &buttonInput;
   startDelayTicks =
       (int)(MYCONFIG_STARTSCREEN_DELAY / MYCONFIG_GAME_TIMER_PERIOD);
   srand(numAttempts);
@@ -69,7 +72,7 @@ void gameControl_tick() {
     display_fillScreen(MYCONFIG_BACKGROUND_COLOR);
     titleScreen(draw);
     snakemap_clear(mapPtr);
-    snake_init(mapPtr);
+    snake_init(mapPtr, buttonPtr);
     break;
   case title_st:
     startDelayCnt = 0;
@@ -78,6 +81,7 @@ void gameControl_tick() {
     startDelayCnt++;
     break;
   case playing_st:
+    gameControl_checkButton();
     if (!(speedControl % MYCONFIG_SNAKE_SPEED)) { // determines snake speed
       snake_tick();
     }
@@ -186,6 +190,15 @@ static void setMap() {
   display_drawFastHLine(LEFT_SIDE, BOT_SIDE, (RIGHT_SIDE - LEFT_SIDE),
                         MYCONFIG_BOARDER_COLOR);
   drawAttempts();
+}
+
+// check to see if button has been pressed
+void gameControl_checkButton() {
+  if (buttons_read() == BUTTONS_BTN3_MASK) {
+    buttonInput = left_button;
+  } else if (buttons_read() == BUTTONS_BTN0_MASK) {
+    buttonInput = right_button;
+  }
 }
 
 // draw/erase instructions in start screen

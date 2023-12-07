@@ -1,4 +1,5 @@
 #include "snake.h"
+#include "buttons.h"
 #include "display.h"
 #include "snakeMap.h"
 #include <stdio.h>
@@ -16,25 +17,22 @@ static void add_head_snake(mapSpaceLocation_t move);
 static void remove_tail_snake();
 static void snakesToSquares(mapSpaceLocation_t location, bool erase);
 static uint8_t findOpening();
-
-// static bool checkButton();//will be done later
-// static void computeNextMove();
+static mapSpaceLocation_t computeNextMove();
 
 //  global variables
 static snake_t snake;
 static snake_st_t currentState;
 static snakemap_t *currentMap;
+static button_indicator *buttonInput;
 static snake_direction snakeDirection;
 
-// test variables
-static uint8_t moveTest = 4;
-
 // call before snake tick
-void snake_init(snakemap_t *map) {
+void snake_init(snakemap_t *map, button_indicator *button) {
   snake.head = -1;
   snake.tail = -1;
   snake.snakeLength = 0;
   currentMap = map;
+  buttonInput = button;
   snakeDirection = right;
   currentState = init_st;
 }
@@ -48,13 +46,11 @@ void snake_tick() {
     for (uint8_t i = 0; i < MYCONFIG_STARTING_SNAKE_LENGTH; i++) {
       add_head_snake(set_snake_location(1, (i + 1)));
     }
-    moveTest = 4;
     break;
   case moving_st:
     // here is where the movement happens
     // or rather, call move snake
-    move_snake(set_snake_location(1, moveTest), false);
-    moveTest++;
+    move_snake(computeNextMove(), 0);
     break;
   case dead_st:
     break;
@@ -164,6 +160,76 @@ static uint8_t findOpening() {
   for (uint8_t i = 0; i < MYCONFIG_SNAKE_MAX_LENGTH; i++) {
     if (snake.body[i].empty) {
       return i;
+    }
+  }
+}
+
+// based on button indicator and current direction determine the next direction
+// to go.
+static mapSpaceLocation_t computeNextMove() {
+  button_indicator nextDirection = *buttonInput;
+  *buttonInput = none;
+  if (snakeDirection == up) {
+    if (nextDirection == left_button) {
+      snakeDirection = left;
+      return set_snake_location(snake.body[snake.head].tileLocation.row,
+                                snake.body[snake.head].tileLocation.col - 1);
+    } else if (nextDirection == right_button) {
+      snakeDirection = right;
+      return set_snake_location(snake.body[snake.head].tileLocation.row,
+                                snake.body[snake.head].tileLocation.col + 1);
+    }
+    // nextDirection is none
+    else {
+      return set_snake_location(snake.body[snake.head].tileLocation.row - 1,
+                                snake.body[snake.head].tileLocation.col);
+    }
+  } else if (snakeDirection == down) {
+    if (nextDirection == left_button) {
+      snakeDirection = right;
+      return set_snake_location(snake.body[snake.head].tileLocation.row,
+                                snake.body[snake.head].tileLocation.col + 1);
+    } else if (nextDirection == right_button) {
+      snakeDirection = left;
+      return set_snake_location(snake.body[snake.head].tileLocation.row,
+                                snake.body[snake.head].tileLocation.col - 1);
+    }
+    // nextDirection is none
+    else {
+      return set_snake_location(snake.body[snake.head].tileLocation.row + 1,
+                                snake.body[snake.head].tileLocation.col);
+    }
+  } else if (snakeDirection == left) {
+    if (nextDirection == left_button) {
+      snakeDirection = down;
+      return set_snake_location(snake.body[snake.head].tileLocation.row + 1,
+                                snake.body[snake.head].tileLocation.col);
+    } else if (nextDirection == right_button) {
+      snakeDirection = up;
+      return set_snake_location(snake.body[snake.head].tileLocation.row - 1,
+                                snake.body[snake.head].tileLocation.col);
+    }
+    // nextDirection is none
+    else {
+      return set_snake_location(snake.body[snake.head].tileLocation.row,
+                                snake.body[snake.head].tileLocation.col - 1);
+    }
+  }
+  // snakeDirection == right is the else condition
+  else {
+    if (nextDirection == left_button) {
+      snakeDirection = up;
+      return set_snake_location(snake.body[snake.head].tileLocation.row-1,
+                                snake.body[snake.head].tileLocation.col);
+    } else if (nextDirection == right_button) {
+      snakeDirection = down;
+      return set_snake_location(snake.body[snake.head].tileLocation.row+1,
+                                snake.body[snake.head].tileLocation.col);
+    }
+    // nextDirection is none
+    else {
+      return set_snake_location(snake.body[snake.head].tileLocation.row,
+                                snake.body[snake.head].tileLocation.col+1);
     }
   }
 }
