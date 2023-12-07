@@ -12,8 +12,6 @@ typedef enum { up, down, left, right } snake_direction;
 // helper functions
 static void snake_clear();
 static void move_snake(mapSpaceLocation_t move, bool grow);
-static mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
-                                             uint8_t colLocation);
 static void add_head_snake(mapSpaceLocation_t move);
 static void remove_tail_snake();
 static void snakesToSquares(mapSpaceLocation_t location, bool erase);
@@ -107,17 +105,9 @@ static void move_snake(mapSpaceLocation_t move, bool grow) {
   }
 }
 
-// pass row and column, return tile location struct
-static mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
-                                             uint8_t colLocation) {
-  mapSpaceLocation_t newLocation;
-  newLocation.row = rowLocation;
-  newLocation.col = colLocation;
-  return newLocation;
-}
-
 // add a new head to snake
 static void add_head_snake(mapSpaceLocation_t move) {
+  // add new head node
   node_t new_node;
   uint8_t index = findOpening();
   snake.body[index] = new_node;
@@ -126,23 +116,34 @@ static void add_head_snake(mapSpaceLocation_t move) {
   snake.body[index].previous = snake.head;
   snake.body[snake.head].next = index;
   snake.head = index;
+  snake.snakeLength++;
+
   // if snake empty update tail
   if (snake.snakeLength == 0) {
     snake.tail = snake.head;
   }
-  snake.snakeLength++;
+
+  // update map
+  currentMap->snakeMap[move.col][move.row] = MAPSPACE_CONTAINS_SNAKE;
+
+  // draw new head square
   snakesToSquares(move, MYCONFIG_DRAW);
 }
 
 // remove tail from snake
 static void remove_tail_snake() {
+  // remove snake tail node
   mapSpaceLocation_t spot = snake.body[snake.tail].tileLocation;
   int8_t newTailIndex = snake.body[snake.tail].next;
   snake.body[snake.tail].empty = true;
   snake.tail = newTailIndex;
-  // printf("tail:%d\n", newTailIndex);
   snake.body[newTailIndex].previous = -1;
   snake.snakeLength--;
+
+  // update map
+  currentMap->snakeMap[spot.col][spot.row] = MAPSPACE_EMPTY;
+
+  // erase tail square
   snakesToSquares(spot, MYCONFIG_ERASE);
 }
 

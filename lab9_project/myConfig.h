@@ -68,6 +68,7 @@
 #define MYCONFIG_SNAKE_SPEED SIXTEENTH_SPEED
 
 // apples
+#define MYCONFIG_APPLE_COLOR DISPLAY_RED
 
 // blockades
 

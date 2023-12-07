@@ -1,8 +1,9 @@
-#include <display.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "buttons.h"
+#include "display.h"
 #include "gameControl.h"
 #include "myConfig.h"
 #include "snake.h"
@@ -19,6 +20,9 @@
 #define RIGHT_SIDE (MYCONFIG_RIGHT_BOARDER + MYCONFIG_BOARDER_OFFSET)
 
 // helper function declarations
+static void dropApple();
+static void dropObstacle();
+static void drawSquare(mapSpaceLocation_t location, int16_t display_color);
 static void setMap();
 static void startScreen(bool erase);
 static void titleScreen(bool erase);
@@ -54,6 +58,7 @@ void gameControl_init() {
   mapPtr = &currentMap;
   startDelayTicks =
       (int)(MYCONFIG_STARTSCREEN_DELAY / MYCONFIG_GAME_TIMER_PERIOD);
+  srand(numAttempts);
 }
 
 // ticks game control sm
@@ -63,7 +68,7 @@ void gameControl_tick() {
   case init_st:
     display_fillScreen(MYCONFIG_BACKGROUND_COLOR);
     titleScreen(draw);
-    // clear map
+    snakemap_clear(mapPtr);
     snake_init(mapPtr);
     break;
   case title_st:
@@ -77,6 +82,8 @@ void gameControl_tick() {
       snake_tick();
     }
     speedControl++;
+    dropApple();
+    dropObstacle();
     drawScore();
     break;
   case paused_st:
@@ -143,6 +150,28 @@ void gameControl_tick() {
   default:
     break;
   }
+}
+
+// drops apple on map
+static void dropApple() {
+  // if no apple present, drop apple
+  if (!mapPtr->haveApple) {
+    int8_t apple_x = (rand() % MYCONFIG_TILE_WIDTH);
+    int8_t apple_y = (rand() % MYCONFIG_TILE_HEIGHT);
+    mapPtr->snakeMap[apple_x][apple_y] = MAPSPACE_APPLE;
+    mapPtr->haveApple = true;
+    drawSquare(set_snake_location(apple_x, apple_y), MYCONFIG_APPLE_COLOR);
+  }
+}
+
+// drops obstacles on map
+static void dropObstacle() {}
+
+// draw/erase square such color at specified location
+static void drawSquare(mapSpaceLocation_t location, int16_t display_color) {
+  display_point_t square = snakeMap_getLocationFromTile(location);
+  display_fillRect(square.x, square.y, MYCONFIG_TILE_SIZE, MYCONFIG_TILE_SIZE,
+                   display_color);
 }
 
 // draw map
