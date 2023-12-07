@@ -2,8 +2,8 @@
 
 // clears map to all empty
 void snakemap_clear(snakemap_t *currentMap) {
-  for (uint16_t i = 0; i < MYCONFIG_TILE_HEIGHT; i++) {
-    for (uint16_t j = 0; j < MYCONFIG_TILE_WIDTH; j++) {
+  for (uint16_t i = 0; i < MYCONFIG_TILE_WIDTH; i++) {
+    for (uint16_t j = 0; j < MYCONFIG_TILE_HEIGHT; j++) {
       currentMap->snakeMap[i][j] = MAPSPACE_EMPTY;
     }
   }

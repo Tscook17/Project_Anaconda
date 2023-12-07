@@ -5,10 +5,10 @@
 #include <stdio.h>
 
 // state machine states for the snake
-typedef enum { init_st, moving_st, go_right, go_left, dead_st } snake_st_t;
+typedef enum { init_st, moving_st, dead_st } snake_st_t;
 
 // this is a global var that determines what direction the snake should move
-typedef enum { up, down, left, right } snake_direction;
+typedef enum { up, down, left, right } snake_direction_t;
 
 // helper functions
 static void snake_clear();
@@ -23,14 +23,16 @@ static mapSpaceLocation_t computeNextMove();
 static snake_t snake;
 static snake_st_t currentState;
 static snakemap_t *currentMap;
-static button_indicator *buttonInput;
-static snake_direction snakeDirection;
+static button_indicator_t *buttonInput;
+static snake_direction_t snakeDirection;
+static mapSpaceLocation_t nextMove;
 
 // call before snake tick
-void snake_init(snakemap_t *map, button_indicator *button) {
+void snake_init(snakemap_t *map, button_indicator_t *button) {
   snake.head = -1;
   snake.tail = -1;
   snake.snakeLength = 0;
+  snake.isDead = false;
   currentMap = map;
   buttonInput = button;
   snakeDirection = right;
@@ -48,9 +50,12 @@ void snake_tick() {
     }
     break;
   case moving_st:
-    // here is where the movement happens
-    // or rather, call move snake
-    move_snake(computeNextMove(), 0);
+    nextMove = computeNextMove();
+    if (currentMap->snakeMap[nextMove.col][nextMove.row] == MAPSPACE_APPLE) {
+      move_snake(nextMove, true);
+    } else {
+      move_snake(nextMove, false);
+    }
     break;
   case dead_st:
     break;
@@ -66,10 +71,6 @@ void snake_tick() {
     currentState = moving_st;
     break;
   case moving_st:
-    break;
-  case go_right:
-    break;
-  case go_left:
     break;
   case dead_st:
     break;
@@ -98,6 +99,8 @@ static void move_snake(mapSpaceLocation_t move, bool grow) {
   add_head_snake(move);
   if (!grow) {
     remove_tail_snake();
+  } else {
+    currentMap->haveApple = false;
   }
 }
 
@@ -167,7 +170,7 @@ static uint8_t findOpening() {
 // based on button indicator and current direction determine the next direction
 // to go.
 static mapSpaceLocation_t computeNextMove() {
-  button_indicator nextDirection = *buttonInput;
+  button_indicator_t nextDirection = *buttonInput;
   *buttonInput = none;
   if (snakeDirection == up) {
     if (nextDirection == left_button) {
@@ -219,17 +222,17 @@ static mapSpaceLocation_t computeNextMove() {
   else {
     if (nextDirection == left_button) {
       snakeDirection = up;
-      return set_snake_location(snake.body[snake.head].tileLocation.row-1,
+      return set_snake_location(snake.body[snake.head].tileLocation.row - 1,
                                 snake.body[snake.head].tileLocation.col);
     } else if (nextDirection == right_button) {
       snakeDirection = down;
-      return set_snake_location(snake.body[snake.head].tileLocation.row+1,
+      return set_snake_location(snake.body[snake.head].tileLocation.row + 1,
                                 snake.body[snake.head].tileLocation.col);
     }
     // nextDirection is none
     else {
       return set_snake_location(snake.body[snake.head].tileLocation.row,
-                                snake.body[snake.head].tileLocation.col+1);
+                                snake.body[snake.head].tileLocation.col + 1);
     }
   }
 }

@@ -51,8 +51,8 @@ static snakemap_t *mapPtr;
 static int8_t score;
 static int8_t numAttempts;
 static uint8_t speedControl;
-static button_indicator buttonInput = none;
-static button_indicator *buttonPtr;
+static button_indicator_t buttonInput = none;
+static button_indicator_t *buttonPtr;
 
 // call before running tick or to reset
 void gameControl_init() {
@@ -159,12 +159,23 @@ void gameControl_tick() {
 // drops apple on map
 static void dropApple() {
   // if no apple present, drop apple
-  if (!mapPtr->haveApple) {
+  if (!(mapPtr->haveApple)) {
+    static bool firstApple = true;
     int8_t apple_x = (rand() % MYCONFIG_TILE_WIDTH);
     int8_t apple_y = (rand() % MYCONFIG_TILE_HEIGHT);
+    while (mapPtr->snakeMap[apple_x][apple_y] != MAPSPACE_EMPTY) {
+      apple_x = (rand() % MYCONFIG_TILE_WIDTH);
+      apple_y = (rand() % MYCONFIG_TILE_HEIGHT);
+    }
     mapPtr->snakeMap[apple_x][apple_y] = MAPSPACE_APPLE;
     mapPtr->haveApple = true;
     drawSquare(set_snake_location(apple_x, apple_y), MYCONFIG_APPLE_COLOR);
+
+    // update score
+    if (!firstApple) {
+      score++;
+    }
+    firstApple = false;
   }
 }
 

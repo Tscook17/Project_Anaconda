@@ -30,9 +30,13 @@
 #define MYCONFIG_BACKGROUND_COLOR DISPLAY_BLACK
 #define MYCONFIG_TILE_SIZE 10
 #define MYCONFIG_TILE_WIDTH                                                    \
-  (int)((MYCONFIG_RIGHT_BOARDER - MYCONFIG_LEFT_BOARDER) / MYCONFIG_TILE_SIZE)
+  (int)((MYCONFIG_RIGHT_BOARDER - MYCONFIG_LEFT_BOARDER) /                     \
+            MYCONFIG_TILE_SIZE -                                               \
+        1)
 #define MYCONFIG_TILE_HEIGHT                                                   \
-  (int)((MYCONFIG_LOWER_BOARDER - MYCONFIG_UPPER_BOARDER) / MYCONFIG_TILE_SIZE)
+  (int)((MYCONFIG_LOWER_BOARDER - MYCONFIG_UPPER_BOARDER) /                    \
+            MYCONFIG_TILE_SIZE -                                               \
+        1)
 
 // score board
 #define MYCONFIG_TEXT_COLOR DISPLAY_WHITE

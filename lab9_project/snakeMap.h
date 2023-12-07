@@ -22,7 +22,7 @@ typedef struct {
 
 // passable board object
 typedef struct {
-  mapSpace_t snakeMap[MYCONFIG_TILE_HEIGHT][MYCONFIG_TILE_WIDTH];
+  mapSpace_t snakeMap[MYCONFIG_TILE_WIDTH][MYCONFIG_TILE_HEIGHT];
 
   bool haveApple;
   bool haveObstacle;
