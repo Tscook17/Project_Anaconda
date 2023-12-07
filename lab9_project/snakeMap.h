@@ -34,4 +34,7 @@ display_point_t snakeMap_getLocationFromTile(mapSpaceLocation_t tile);
 
 mapSpaceLocation_t snakeMap_getTileFromLocation(display_point_t spot);
 
+mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
+                                             uint8_t colLocation);
+
 #endif /* SNAKEMAP_H */

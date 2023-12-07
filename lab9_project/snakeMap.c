@@ -3,7 +3,7 @@
 // clears map to all empty
 void snakemap_clear(snakemap_t *currentMap) {
   for (uint16_t i = 0; i < MYCONFIG_TILE_HEIGHT; i++) {
-    for (uint16_t j = 0; j < MYCONFIG_TILE_WIDTH; i++) {
+    for (uint16_t j = 0; j < MYCONFIG_TILE_WIDTH; j++) {
       currentMap->snakeMap[i][j] = MAPSPACE_EMPTY;
     }
   }
@@ -32,4 +32,13 @@ mapSpaceLocation_t snakeMap_getTileFromLocation(display_point_t spot) {
   location.col = (tx - MYCONFIG_LEFT_BOARDER) / MYCONFIG_TILE_SIZE;
   location.row = (ty - MYCONFIG_UPPER_BOARDER) / MYCONFIG_TILE_SIZE;
   return location;
+}
+
+// pass row and column, return tile location struct
+mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
+                                             uint8_t colLocation) {
+  mapSpaceLocation_t newLocation;
+  newLocation.row = rowLocation;
+  newLocation.col = colLocation;
+  return newLocation;
 }
