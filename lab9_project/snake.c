@@ -51,6 +51,16 @@ void snake_tick() {
     break;
   case moving_st:
     nextMove = computeNextMove();
+    if ((nextMove.col > MYCONFIG_TILE_WIDTH || nextMove.col < 0) ||
+        (nextMove.row > MYCONFIG_TILE_HEIGHT || nextMove.row < 0)) {
+      snake.isDead = true;
+      break;
+    }
+    else if(currentMap->snakeMap[nextMove.col][nextMove.row] == MAPSPACE_CONTAINS_SNAKE){
+      snake.isDead = true;
+      break;
+    }
+
     if (currentMap->snakeMap[nextMove.col][nextMove.row] == MAPSPACE_APPLE) {
       move_snake(nextMove, true);
     } else {
@@ -71,6 +81,10 @@ void snake_tick() {
     currentState = moving_st;
     break;
   case moving_st:
+    if(snake.isDead == true){
+      currentState = dead_st;
+      currentMap->snakeDead = true;
+    }
     break;
   case dead_st:
     break;

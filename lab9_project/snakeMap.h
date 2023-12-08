@@ -26,6 +26,7 @@ typedef struct {
 
   bool haveApple;
   bool haveObstacle;
+  bool snakeDead;
 } snakemap_t;
 
 void snakemap_clear(snakemap_t *currentMap);

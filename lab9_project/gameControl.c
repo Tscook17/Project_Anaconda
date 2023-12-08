@@ -127,7 +127,7 @@ void gameControl_tick() {
     if (switches_read() & SWITCHES_SW0_MASK) { // switch
       currentState = paused_st;
       drawPaused(draw);
-    } else if (0) { // deaded
+    } else if (mapPtr->snakeDead) { // deaded
       currentState = endGame_st;
       endGameScreen();
     } else {
