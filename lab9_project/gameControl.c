@@ -50,7 +50,8 @@ static snakemap_t currentMap;
 static snakemap_t *mapPtr;
 static int8_t score;
 static int8_t numAttempts;
-static uint8_t speedControl;
+static uint16_t speedControl;
+static uint8_t speedChange;
 static button_indicator_t buttonInput = none;
 static button_indicator_t *buttonPtr;
 
@@ -73,6 +74,8 @@ void gameControl_tick() {
     titleScreen(draw);
     snakemap_clear(mapPtr);
     snake_init(mapPtr, buttonPtr);
+    speedChange = MYCONFIG_STARTING_SNAKE_SPEED;
+    speedControl = 0;
     score = 0;
     break;
   case title_st:
@@ -83,7 +86,7 @@ void gameControl_tick() {
     break;
   case playing_st:
     gameControl_checkButton();
-    if (!(speedControl % MYCONFIG_SNAKE_SPEED)) { // determines snake speed
+    if (!(speedControl % speedChange)) { // determines snake speed
       snake_tick();
     }
     speedControl++;
@@ -175,6 +178,9 @@ static void dropApple() {
     // update score
     if (!firstApple) {
       score++;
+      if (speedChange != 1) {
+        speedChange--;
+      }
     }
     firstApple = false;
   }

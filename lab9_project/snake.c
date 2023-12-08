@@ -46,7 +46,9 @@ void snake_tick() {
   case init_st:
     snake_clear();
     for (uint8_t i = 0; i < MYCONFIG_STARTING_SNAKE_LENGTH; i++) {
-      add_head_snake(set_snake_location((i + 1), 1));
+      add_head_snake(
+          set_snake_location((MYCONFIG_SNAKE_HEAD_START_LOCATION_X + i),
+                             MYCONFIG_SNAKE_HEAD_START_LOCATION_Y));
     }
     break;
   case moving_st:
@@ -55,8 +57,8 @@ void snake_tick() {
         (nextMove.row > MYCONFIG_TILE_HEIGHT || nextMove.row < 0)) {
       snake.isDead = true;
       break;
-    }
-    else if(currentMap->snakeMap[nextMove.col][nextMove.row] == MAPSPACE_CONTAINS_SNAKE){
+    } else if (currentMap->snakeMap[nextMove.col][nextMove.row] ==
+               MAPSPACE_CONTAINS_SNAKE) {
       snake.isDead = true;
       break;
     }
@@ -81,7 +83,7 @@ void snake_tick() {
     currentState = moving_st;
     break;
   case moving_st:
-    if(snake.isDead == true){
+    if (snake.isDead == true) {
       currentState = dead_st;
       currentMap->snakeDead = true;
     }
