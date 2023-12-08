@@ -23,6 +23,7 @@
 static void dropApple();
 static void dropObstacle();
 static void drawSquare(mapSpaceLocation_t location, int16_t display_color);
+static void drawX(mapSpaceLocation_t location, int16_t display_color);
 static void setMap();
 static void startScreen(bool erase);
 static void titleScreen(bool erase);
@@ -178,7 +179,7 @@ static void dropApple() {
     // update score
     if (!firstApple) {
       score++;
-      if (speedChange != 1) {
+      if ((speedChange != 1) && MYCONFIG_SNAKE_CHANGE_SPEED) {
         speedChange--;
       }
     }
@@ -187,13 +188,38 @@ static void dropApple() {
 }
 
 // drops obstacles on map
-static void dropObstacle() {}
+static void dropObstacle() {
+  while (mapPtr->numObstacle < MYCONFIG_OBSTACLE_NUM) {
+    int8_t obstacle_x = (rand() % MYCONFIG_TILE_WIDTH);
+    int8_t obstacle_y = (rand() % MYCONFIG_TILE_HEIGHT);
+    while (mapPtr->snakeMap[obstacle_x][obstacle_y] != MAPSPACE_EMPTY) {
+      obstacle_x = (rand() % MYCONFIG_TILE_WIDTH);
+      obstacle_y = (rand() % MYCONFIG_TILE_HEIGHT);
+    }
+    mapPtr->snakeMap[obstacle_x][obstacle_y] = MAPSPACE_OBSTACLE;
+    (mapPtr->numObstacle)++;
+
+    if (((speedChange != 1) && (speedChange < MYCONFIG_STARTING_SNAKE_SPEED)) &&
+        MYCONFIG_SNAKE_CHANGE_SPEED) {
+      speedChange++;
+    }
+    drawX(set_snake_location(obstacle_x, obstacle_y), MYCONFIG_OBSTACLE_COLOR);
+  }
+}
 
 // draw/erase square such color at specified location
 static void drawSquare(mapSpaceLocation_t location, int16_t display_color) {
   display_point_t square = snakeMap_getLocationFromTile(location);
   display_fillRect(square.x, square.y, MYCONFIG_TILE_SIZE, MYCONFIG_TILE_SIZE,
                    display_color);
+}
+
+static void drawX(mapSpaceLocation_t location, int16_t display_color) {
+  display_point_t square = snakeMap_getLocationFromTile(location);
+  display_drawLine(square.x, square.y, (square.x + MYCONFIG_TILE_SIZE),
+                   (square.y + MYCONFIG_TILE_SIZE), display_color);
+  display_drawLine((square.x + MYCONFIG_TILE_SIZE), square.y, square.x,
+                   (square.y + MYCONFIG_TILE_SIZE), display_color);
 }
 
 // draw map

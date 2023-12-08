@@ -8,8 +8,8 @@ void snakemap_clear(snakemap_t *currentMap) {
     }
   }
   currentMap->haveApple = false;
-  currentMap->haveObstacle = false;
   currentMap->snakeDead = false;
+  currentMap->numObstacle = 0;
 }
 
 // converts snake row and column to display pixels

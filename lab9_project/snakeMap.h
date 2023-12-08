@@ -24,8 +24,8 @@ typedef struct {
 typedef struct {
   mapSpace_t snakeMap[MYCONFIG_TILE_WIDTH][MYCONFIG_TILE_HEIGHT];
 
+  uint8_t numObstacle;
   bool haveApple;
-  bool haveObstacle;
   bool snakeDead;
 } snakemap_t;
 

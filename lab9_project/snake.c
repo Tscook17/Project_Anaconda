@@ -66,7 +66,14 @@ void snake_tick() {
     if (currentMap->snakeMap[nextMove.col][nextMove.row] == MAPSPACE_APPLE) {
       move_snake(nextMove, true);
     } else {
-      move_snake(nextMove, false);
+      if (currentMap->snakeMap[nextMove.col][nextMove.row] ==
+          MAPSPACE_OBSTACLE) {
+        move_snake(nextMove, false);
+        remove_tail_snake();
+        (currentMap->numObstacle)--;
+      } else {
+        move_snake(nextMove, false);
+      }
     }
     break;
   case dead_st:
@@ -84,6 +91,9 @@ void snake_tick() {
     break;
   case moving_st:
     if (snake.isDead == true) {
+      currentState = dead_st;
+      currentMap->snakeDead = true;
+    } else if (snake.snakeLength == 0) {
       currentState = dead_st;
       currentMap->snakeDead = true;
     }
