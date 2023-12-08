@@ -73,6 +73,7 @@ void gameControl_tick() {
     titleScreen(draw);
     snakemap_clear(mapPtr);
     snake_init(mapPtr, buttonPtr);
+    score = 0;
     break;
   case title_st:
     startDelayCnt = 0;

@@ -35,8 +35,8 @@ mapSpaceLocation_t snakeMap_getTileFromLocation(display_point_t spot) {
 }
 
 // pass row and column, return tile location struct
-mapSpaceLocation_t set_snake_location(uint8_t rowLocation,
-                                             uint8_t colLocation) {
+mapSpaceLocation_t set_snake_location(uint8_t colLocation,
+                                             uint8_t rowLocation) {
   mapSpaceLocation_t newLocation;
   newLocation.row = rowLocation;
   newLocation.col = colLocation;

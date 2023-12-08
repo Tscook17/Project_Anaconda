@@ -46,7 +46,7 @@ void snake_tick() {
   case init_st:
     snake_clear();
     for (uint8_t i = 0; i < MYCONFIG_STARTING_SNAKE_LENGTH; i++) {
-      add_head_snake(set_snake_location(1, (i + 1)));
+      add_head_snake(set_snake_location((i + 1), 1));
     }
     break;
   case moving_st:
@@ -175,64 +175,64 @@ static mapSpaceLocation_t computeNextMove() {
   if (snakeDirection == up) {
     if (nextDirection == left_button) {
       snakeDirection = left;
-      return set_snake_location(snake.body[snake.head].tileLocation.row,
-                                snake.body[snake.head].tileLocation.col - 1);
+      return set_snake_location(snake.body[snake.head].tileLocation.col - 1,
+                                snake.body[snake.head].tileLocation.row);
     } else if (nextDirection == right_button) {
       snakeDirection = right;
-      return set_snake_location(snake.body[snake.head].tileLocation.row,
-                                snake.body[snake.head].tileLocation.col + 1);
+      return set_snake_location(snake.body[snake.head].tileLocation.col + 1,
+                                snake.body[snake.head].tileLocation.row);
     }
     // nextDirection is none
     else {
-      return set_snake_location(snake.body[snake.head].tileLocation.row - 1,
-                                snake.body[snake.head].tileLocation.col);
+      return set_snake_location(snake.body[snake.head].tileLocation.col,
+                                snake.body[snake.head].tileLocation.row - 1);
     }
   } else if (snakeDirection == down) {
     if (nextDirection == left_button) {
       snakeDirection = right;
-      return set_snake_location(snake.body[snake.head].tileLocation.row,
-                                snake.body[snake.head].tileLocation.col + 1);
+      return set_snake_location(snake.body[snake.head].tileLocation.col + 1,
+                                snake.body[snake.head].tileLocation.row);
     } else if (nextDirection == right_button) {
       snakeDirection = left;
-      return set_snake_location(snake.body[snake.head].tileLocation.row,
-                                snake.body[snake.head].tileLocation.col - 1);
+      return set_snake_location(snake.body[snake.head].tileLocation.col - 1,
+                                snake.body[snake.head].tileLocation.row);
     }
     // nextDirection is none
     else {
-      return set_snake_location(snake.body[snake.head].tileLocation.row + 1,
-                                snake.body[snake.head].tileLocation.col);
+      return set_snake_location(snake.body[snake.head].tileLocation.col,
+                                snake.body[snake.head].tileLocation.row + 1);
     }
   } else if (snakeDirection == left) {
     if (nextDirection == left_button) {
       snakeDirection = down;
-      return set_snake_location(snake.body[snake.head].tileLocation.row + 1,
-                                snake.body[snake.head].tileLocation.col);
+      return set_snake_location(snake.body[snake.head].tileLocation.col,
+                                snake.body[snake.head].tileLocation.row + 1);
     } else if (nextDirection == right_button) {
       snakeDirection = up;
-      return set_snake_location(snake.body[snake.head].tileLocation.row - 1,
-                                snake.body[snake.head].tileLocation.col);
+      return set_snake_location(snake.body[snake.head].tileLocation.col,
+                                snake.body[snake.head].tileLocation.row - 1);
     }
     // nextDirection is none
     else {
-      return set_snake_location(snake.body[snake.head].tileLocation.row,
-                                snake.body[snake.head].tileLocation.col - 1);
+      return set_snake_location(snake.body[snake.head].tileLocation.col - 1,
+                                snake.body[snake.head].tileLocation.row);
     }
   }
   // snakeDirection == right is the else condition
   else {
     if (nextDirection == left_button) {
       snakeDirection = up;
-      return set_snake_location(snake.body[snake.head].tileLocation.row - 1,
-                                snake.body[snake.head].tileLocation.col);
+      return set_snake_location(snake.body[snake.head].tileLocation.col,
+                                snake.body[snake.head].tileLocation.row - 1);
     } else if (nextDirection == right_button) {
       snakeDirection = down;
-      return set_snake_location(snake.body[snake.head].tileLocation.row + 1,
-                                snake.body[snake.head].tileLocation.col);
+      return set_snake_location(snake.body[snake.head].tileLocation.col,
+                                snake.body[snake.head].tileLocation.row + 1);
     }
     // nextDirection is none
     else {
-      return set_snake_location(snake.body[snake.head].tileLocation.row,
-                                snake.body[snake.head].tileLocation.col + 1);
+      return set_snake_location(snake.body[snake.head].tileLocation.col + 1,
+                                snake.body[snake.head].tileLocation.row);
     }
   }
 }
