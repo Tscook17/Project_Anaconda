@@ -212,10 +212,12 @@ static void setMap() {
 
 // check to see if button has been pressed
 void gameControl_checkButton() {
-  if (buttons_read() == BUTTONS_BTN3_MASK) {
-    buttonInput = left_button;
-  } else if (buttons_read() == BUTTONS_BTN0_MASK) {
-    buttonInput = right_button;
+  if (buttonInput == none) {
+    if (buttons_read() == BUTTONS_BTN3_MASK) {
+      buttonInput = left_button;
+    } else if (buttons_read() == BUTTONS_BTN0_MASK) {
+      buttonInput = right_button;
+    }
   }
 }
 
