@@ -35,7 +35,7 @@ static void init_hardware() {
   switches_init();
   touchscreen_init(MYCONFIG_GAME_TIMER_PERIOD);
 
-  // Initialize timer interrupts
+  // Initialize game control timer interrupts
   interrupts_init();
   interrupts_register(INTERVAL_TIMER_0_INTERRUPT_IRQ, gameControl_isr);
   interrupts_irq_enable(INTERVAL_TIMER_0_INTERRUPT_IRQ);

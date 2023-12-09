@@ -2,7 +2,7 @@
 #define GAMECONTROL_H
 
 // this is the button states it could possibly be
-typedef enum { left_button, right_button, none } button_indicator_t;
+typedef enum { left_button_press, right_button_press, no_button_press } button_indicator_t;
 
 // initialize game controller
 void gameControl_init();

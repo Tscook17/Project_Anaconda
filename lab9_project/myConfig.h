@@ -1,6 +1,14 @@
 #ifndef MY_CONFIG_H
 #define MY_CONFIG_H
 
+/*
+Todo list:
+- fix create snake bug
+- add button isr to main to avoid double bounce
+- fix obstacles
+- add sounds maybe?
+*/
+
 // general specs
 #define MYCONFIG_GAME_TIMER_PERIOD 45.0E-3
 #define MYCONFIG_ERASE true
@@ -73,7 +81,7 @@
 
 // snake speed
 #define MYCONFIG_SNAKE_CHANGE_SPEED true
-#define MYCONFIG_STARTING_SNAKE_SPEED SIXTEENTH_SPEED
+#define MYCONFIG_STARTING_SNAKE_SPEED QUARTER_SPEED
 
 // apples
 #define MYCONFIG_APPLE_COLOR DISPLAY_RED

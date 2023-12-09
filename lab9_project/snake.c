@@ -197,13 +197,13 @@ static uint8_t findOpening() {
 // to go.
 static mapSpaceLocation_t computeNextMove() {
   button_indicator_t nextDirection = *buttonInput;
-  *buttonInput = none;
+  *buttonInput = no_button_press;
   if (snakeDirection == up) {
-    if (nextDirection == left_button) {
+    if (nextDirection == left_button_press) {
       snakeDirection = left;
       return set_snake_location(snake.body[snake.head].tileLocation.col - 1,
                                 snake.body[snake.head].tileLocation.row);
-    } else if (nextDirection == right_button) {
+    } else if (nextDirection == right_button_press) {
       snakeDirection = right;
       return set_snake_location(snake.body[snake.head].tileLocation.col + 1,
                                 snake.body[snake.head].tileLocation.row);
@@ -214,11 +214,11 @@ static mapSpaceLocation_t computeNextMove() {
                                 snake.body[snake.head].tileLocation.row - 1);
     }
   } else if (snakeDirection == down) {
-    if (nextDirection == left_button) {
+    if (nextDirection == left_button_press) {
       snakeDirection = right;
       return set_snake_location(snake.body[snake.head].tileLocation.col + 1,
                                 snake.body[snake.head].tileLocation.row);
-    } else if (nextDirection == right_button) {
+    } else if (nextDirection == right_button_press) {
       snakeDirection = left;
       return set_snake_location(snake.body[snake.head].tileLocation.col - 1,
                                 snake.body[snake.head].tileLocation.row);
@@ -229,11 +229,11 @@ static mapSpaceLocation_t computeNextMove() {
                                 snake.body[snake.head].tileLocation.row + 1);
     }
   } else if (snakeDirection == left) {
-    if (nextDirection == left_button) {
+    if (nextDirection == left_button_press) {
       snakeDirection = down;
       return set_snake_location(snake.body[snake.head].tileLocation.col,
                                 snake.body[snake.head].tileLocation.row + 1);
-    } else if (nextDirection == right_button) {
+    } else if (nextDirection == right_button_press) {
       snakeDirection = up;
       return set_snake_location(snake.body[snake.head].tileLocation.col,
                                 snake.body[snake.head].tileLocation.row - 1);
@@ -243,14 +243,12 @@ static mapSpaceLocation_t computeNextMove() {
       return set_snake_location(snake.body[snake.head].tileLocation.col - 1,
                                 snake.body[snake.head].tileLocation.row);
     }
-  }
-  // snakeDirection == right is the else condition
-  else {
-    if (nextDirection == left_button) {
+  } else if (snakeDirection == right) {
+    if (nextDirection == left_button_press) {
       snakeDirection = up;
       return set_snake_location(snake.body[snake.head].tileLocation.col,
                                 snake.body[snake.head].tileLocation.row - 1);
-    } else if (nextDirection == right_button) {
+    } else if (nextDirection == right_button_press) {
       snakeDirection = down;
       return set_snake_location(snake.body[snake.head].tileLocation.col,
                                 snake.body[snake.head].tileLocation.row + 1);

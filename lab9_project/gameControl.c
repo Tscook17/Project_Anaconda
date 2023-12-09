@@ -53,7 +53,7 @@ static int8_t score;
 static int8_t numAttempts;
 static uint16_t speedControl;
 static uint8_t speedChange;
-static button_indicator_t buttonInput = none;
+static button_indicator_t buttonInput = no_button_press;
 static button_indicator_t *buttonPtr;
 
 // call before running tick or to reset
@@ -75,7 +75,7 @@ void gameControl_tick() {
     titleScreen(draw);
     snakemap_clear(mapPtr);
     snake_init(mapPtr, buttonPtr);
-    speedChange = MYCONFIG_STARTING_SNAKE_SPEED;
+    speedChange = MYCONFIG_STARTING_SNAKE_SPEED * 2;
     speedControl = 0;
     score = 0;
     break;
@@ -132,6 +132,7 @@ void gameControl_tick() {
       currentState = paused_st;
       drawPaused(draw);
     } else if (mapPtr->snakeDead) { // deaded
+      numAttempts++;
       currentState = endGame_st;
       endGameScreen();
     } else {
@@ -158,6 +159,17 @@ void gameControl_tick() {
     break;
   default:
     break;
+  }
+}
+
+// check to see if button has been pressed
+void gameControl_checkButton() {
+  if (buttonInput == no_button_press) {
+    if (buttons_read() & BUTTONS_BTN3_MASK) {
+      buttonInput = left_button_press;
+    } else if (buttons_read() & BUTTONS_BTN0_MASK) {
+      buttonInput = right_button_press;
+    }
   }
 }
 
@@ -234,17 +246,6 @@ static void setMap() {
   display_drawFastHLine(LEFT_SIDE, BOT_SIDE, (RIGHT_SIDE - LEFT_SIDE),
                         MYCONFIG_BOARDER_COLOR);
   drawAttempts();
-}
-
-// check to see if button has been pressed
-void gameControl_checkButton() {
-  if (buttonInput == none) {
-    if (buttons_read() == BUTTONS_BTN3_MASK) {
-      buttonInput = left_button;
-    } else if (buttons_read() == BUTTONS_BTN0_MASK) {
-      buttonInput = right_button;
-    }
-  }
 }
 
 // draw/erase instructions in start screen
