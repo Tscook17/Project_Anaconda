@@ -28,7 +28,7 @@ static void setMap();
 static void startScreen(bool erase);
 static void titleScreen(bool erase);
 static void drawPaused(bool erase);
-static void drawScore();
+static void drawScore(bool decrement);
 static void drawAttempts();
 static void endGameScreen();
 
@@ -95,7 +95,7 @@ void gameControl_tick() {
     speedControl++;
     dropApple();
     dropObstacle();
-    drawScore();
+    drawScore(false);
     break;
   case paused_st:
     break;
@@ -223,7 +223,15 @@ static void dropObstacle() {
         MYCONFIG_SNAKE_CHANGE_SPEED) {
       speedChange++;
     }
-    drawX(set_snake_location(obstacle_x, obstacle_y), MYCONFIG_OBSTACLE_COLOR);
+    if (score != 0) {
+      score--;
+      drawScore(true);
+    }
+
+    drawSquare(set_snake_location(obstacle_x, obstacle_y),
+               MYCONFIG_OBSTACLE_COLOR);
+    drawX(set_snake_location(obstacle_x, obstacle_y),
+          MYCONFIG_OBSTACLE_EDGE_COLOR);
   }
 }
 
@@ -236,10 +244,10 @@ static void drawSquare(mapSpaceLocation_t location, int16_t display_color) {
 
 static void drawX(mapSpaceLocation_t location, int16_t display_color) {
   display_point_t square = snakeMap_getLocationFromTile(location);
-  display_drawLine(square.x, square.y, (square.x + MYCONFIG_TILE_SIZE),
-                   (square.y + MYCONFIG_TILE_SIZE), display_color);
-  display_drawLine((square.x + MYCONFIG_TILE_SIZE), square.y, square.x,
-                   (square.y + MYCONFIG_TILE_SIZE), display_color);
+  display_drawLine(square.x, square.y, (square.x + MYCONFIG_TILE_SIZE - 1),
+                   (square.y + MYCONFIG_TILE_SIZE - 1), display_color);
+  display_drawLine((square.x + MYCONFIG_TILE_SIZE - 1), square.y, square.x,
+                   (square.y + MYCONFIG_TILE_SIZE - 1), display_color);
 }
 
 // draw map
@@ -298,7 +306,7 @@ static void drawPaused(bool erase) {
 }
 
 // draw/update score
-static void drawScore() {
+static void drawScore(bool decrement) {
   // print score
   display_setTextSize(MYCONFIG_SCORE_TEXT_SIZE);
   display_setCursor(MYCONFIG_SCORE_XLOCATION, MYCONFIG_SCORE_YLOCATION);
@@ -310,7 +318,11 @@ static void drawScore() {
     display_setTextColor(MYCONFIG_BACKGROUND_COLOR);
     display_setCursor(MYCONFIG_NUM_SCORE_XLOCATION,
                       MYCONFIG_NUM_SCORE_YLOCATION);
-    display_printDecimalInt(score - 1);
+    if (decrement) {
+      display_printDecimalInt(score + 1);
+    } else {
+      display_printDecimalInt(score - 1);
+    }
   }
 
   display_setCursor(MYCONFIG_NUM_SCORE_XLOCATION, MYCONFIG_NUM_SCORE_YLOCATION);
