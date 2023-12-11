@@ -55,6 +55,7 @@ static uint16_t speedControl;
 static uint8_t speedChange;
 static button_indicator_t buttonInput = no_button_press;
 static button_indicator_t *buttonPtr;
+static bool buttonsCleared;
 
 // call before running tick or to reset
 void gameControl_init() {
@@ -75,7 +76,7 @@ void gameControl_tick() {
     titleScreen(draw);
     snakemap_clear(mapPtr);
     snake_init(mapPtr, buttonPtr);
-    speedChange = MYCONFIG_STARTING_SNAKE_SPEED * 2;
+    speedChange = MYCONFIG_STARTING_SNAKE_SPEED;
     speedControl = 0;
     score = 0;
     break;
@@ -90,6 +91,7 @@ void gameControl_tick() {
     if (!(speedControl % speedChange)) { // determines snake speed
       snake_tick();
     }
+    gameControl_checkButton();
     speedControl++;
     dropApple();
     dropObstacle();
@@ -164,12 +166,18 @@ void gameControl_tick() {
 
 // check to see if button has been pressed
 void gameControl_checkButton() {
-  if (buttonInput == no_button_press) {
-    if (buttons_read() & BUTTONS_BTN3_MASK) {
-      buttonInput = left_button_press;
-    } else if (buttons_read() & BUTTONS_BTN0_MASK) {
-      buttonInput = right_button_press;
+  if (buttonsCleared) {
+    if (buttonInput == no_button_press) {
+      if (buttons_read() & BUTTONS_BTN3_MASK) {
+        buttonInput = left_button_press;
+      } else if (buttons_read() & BUTTONS_BTN0_MASK) {
+        buttonInput = right_button_press;
+      }
     }
+    buttonsCleared = false;
+  }
+  if (buttons_read() == 0) {
+    buttonsCleared = true;
   }
 }
 

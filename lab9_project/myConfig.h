@@ -4,7 +4,7 @@
 /*
 Todo list:
 - fix create snake bug
-- add button isr to main to avoid double bounce
+- right edge instant die/apple obstacle push
 - fix obstacles
 - add sounds maybe?
 */
@@ -81,7 +81,7 @@ Todo list:
 
 // snake speed
 #define MYCONFIG_SNAKE_CHANGE_SPEED true
-#define MYCONFIG_STARTING_SNAKE_SPEED QUARTER_SPEED
+#define MYCONFIG_STARTING_SNAKE_SPEED SIXTEENTH_SPEED
 
 // apples
 #define MYCONFIG_APPLE_COLOR DISPLAY_RED
